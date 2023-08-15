@@ -10,11 +10,7 @@ import net.jmecn.gui.state.GuiState;
  * @author yanmaoyuan
  * @date 2023/8/15
  */
-public class Main extends SimpleApplication {
-    @Override
-    public void simpleInitApp() {
-        stateManager.attach(new GuiState());
-    }
+public class Main {
 
     public static void main(String[] args) {
         AppSettings setting = new AppSettings(true);
