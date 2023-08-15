@@ -1,3 +1,4 @@
 #!/bin/sh
-cd ..
-java -jar -Xmx64m -XstartOnFirstThread lemur-sprite-sheet-1.0-SNAPSHOT-jar-with-dependency.jar
+CUR_DIR=$(cd $(dirname $0);pwd)
+cd $CUR_DIR/..
+java -jar -Xmx64m -XstartOnFirstThread lemur-sprite-sheet*.jar
