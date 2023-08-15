@@ -20,7 +20,7 @@ public class Main {
         setting.setFrameRate(60);
         setting.setSamples(4);
         setting.setGammaCorrection(false);
-        setting.setRenderer(AppSettings.LWJGL_OPENGL33);
+        setting.setRenderer(AppSettings.LWJGL_OPENGL40);
         setting.setUseRetinaFrameBuffer(false);
 
         SimpleApplication app = new SimpleApplication(new GuiState()) {

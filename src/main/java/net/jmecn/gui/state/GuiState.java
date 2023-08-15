@@ -11,19 +11,17 @@ import com.jme3.material.Materials;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.math.Vector4f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.*;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
-import com.jme3.util.TempVars;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.BorderLayout;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
 import com.simsilica.lemur.component.SpringGridLayout;
 import com.simsilica.lemur.core.VersionedReference;
-import com.simsilica.lemur.event.CursorButtonEvent;
 import com.simsilica.lemur.event.CursorEventControl;
-import com.simsilica.lemur.event.DefaultCursorListener;
 import com.simsilica.lemur.event.DragHandler;
 import com.simsilica.lemur.style.BaseStyles;
 import com.simsilica.lemur.style.ElementId;
@@ -38,7 +36,7 @@ import java.nio.FloatBuffer;
  */
 public class GuiState extends BaseAppState {
 
-    // 这是修改过的 Unshaded.j3md，增加了两个参数：Tiling 和 Offset
+    // 这是修改过的 Unshaded.j3md，增加了两个参数：Tiling 和 Offset。使用一个 Vector4f 存储这两个参数。
     private static final String MY_UNSHADED = "/MatDefs/MyUnshaded.j3md";
     public static final String MY_TEXTURE = "Textures/Steampunk_UI_Alternative_Colors_1.png";
     private static final String MISSING_TEXTURE = "/Common/Textures/MissingTexture.png";
@@ -63,6 +61,8 @@ public class GuiState extends BaseAppState {
     private AssetManager assetManager;
 
     private Vector2f resolution;// 屏幕分辨率
+
+    private Vector4f tilingOffset = new Vector4f();
 
     private Geometry bg;
     private Geometry wire;
@@ -253,17 +253,12 @@ public class GuiState extends BaseAppState {
         wire.setLocalTranslation(offsetX, offsetY, 2f);
         wire.setLocalScale(tilingX, tilingY, 1f);
 
-        TempVars tempVars = TempVars.get();
-
-        Vector2f tiling = tempVars.vect2d.set(tilingX, tilingY);
-        Vector2f offset = tempVars.vect2d2.set(offsetX, offsetY);
+        tilingOffset.set(tilingX, tilingY, offsetX, offsetY);
 
         // 通过修改mesh的uv坐标来实现
-        refreshMesh(img1, tiling, offset);
+        refreshMesh(img1, tilingOffset);
         // 通过修改shader参数来实现
-        refreshMaterial(img2, tiling, offset);
-
-        tempVars.release();
+        refreshMaterial(img2, tilingOffset);
     }
 
     @Override
@@ -278,7 +273,7 @@ public class GuiState extends BaseAppState {
     protected void onDisable() {
     }
 
-    private void refreshMesh(Geometry geom, Vector2f tiling, Vector2f offset) {
+    private void refreshMesh(Geometry geom, Vector4f tilingOffset) {
         Quad mesh = (Quad) geom.getMesh();
         VertexBuffer tc = mesh.getBuffer(VertexBuffer.Type.TexCoord);
 
@@ -293,17 +288,16 @@ public class GuiState extends BaseAppState {
         for (int i = 0; i < uv.length; i += 2) {
             float x = uv[i];
             float y = uv[i + 1];
-            x = x * tiling.getX() + offset.getX();
-            y = y * tiling.getY() + offset.getY();
+            x = x * tilingOffset.getX() + tilingOffset.getZ();
+            y = y * tilingOffset.getY() + tilingOffset.getW();
             fb.put(x).put(y);
         }
         fb.clear();
         tc.updateData(fb);
     }
 
-    private void refreshMaterial(Geometry geom, Vector2f tiling, Vector2f offset) {
+    private void refreshMaterial(Geometry geom, Vector4f tilingOffset) {
         Material mat = geom.getMaterial();
-        mat.setVector2("Tiling", tiling);
-        mat.setVector2("Offset", offset);
+        mat.setVector4("TilingOffset", tilingOffset);
     }
 }

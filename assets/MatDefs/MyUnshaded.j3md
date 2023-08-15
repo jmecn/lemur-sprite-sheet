@@ -1,8 +1,7 @@
 MaterialDef Unshaded {
 
     MaterialParameters {
-        Vector2 Offset
-        Vector2 Tiling
+        Vector4 TilingOffset
         Texture2D ColorMap
         Texture2D LightMap
         Color Color (Color)
@@ -79,8 +78,7 @@ MaterialDef Unshaded {
         Defines {
             INSTANCING : UseInstancing
             SEPARATE_TEXCOORD : SeparateTexCoord
-            HAS_TILING : Tiling
-            HAS_OFFSET : Offset
+            HAS_TILING_OFFSET : TilingOffset
             HAS_COLORMAP : ColorMap
             HAS_LIGHTMAP : LightMap
             HAS_VERTEXCOLOR : VertexColor

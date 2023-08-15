@@ -20,26 +20,25 @@ varying vec4 vertColor;
 #ifdef HAS_POINTSIZE
 uniform float m_PointSize;
 #endif
-#ifdef HAS_TILING
-uniform vec2 m_Tiling;
-#endif
-#ifdef HAS_OFFSET
-uniform vec2 m_Offset;
+#ifdef HAS_TILING_OFFSET
+uniform vec4 m_TilingOffset;
 #endif
 
 void main(){
     #ifdef NEED_TEXCOORD1
     texCoord1 = inTexCoord;
-    #ifdef HAS_TILING
-    texCoord1 *= m_Tiling;
-    #endif
-    #ifdef HAS_OFFSET
-    texCoord1 += m_Offset;
+    #ifdef HAS_TILING_OFFSET
+    // Apply tiling and offset to texcoord1
+    texCoord1 = texCoord1 * m_TilingOffset.xy + m_TilingOffset.zw;
     #endif
     #endif
 
     #ifdef SEPARATE_TEXCOORD
     texCoord2 = inTexCoord2;
+    #ifdef HAS_TILING_OFFSET
+    // Apply tiling and offset to texcoord2
+    texCoord2 = texCoord2 * m_TilingOffset.xy + m_TilingOffset.zw;
+    #endif
     #endif
 
     #ifdef HAS_VERTEXCOLOR
